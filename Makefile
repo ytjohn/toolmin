@@ -104,7 +104,7 @@ sqlc: sqlc-install  # Generate the SQLC code
 	@$(SQLC) generate
 
 build:  # Build the application
-	go build -o $(LOCALBIN)/ ./...
+	go build -o $(LOCALBIN)/toolmin ./cmd
 
 clean:  # Remove the application binary
 	rm -rf $(LOCALBIN)/bmp

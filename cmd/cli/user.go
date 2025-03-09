@@ -33,18 +33,28 @@ func init() {
 	createUserCmd.Flags().StringVarP(&userEmail, "email", "e", "", "User email")
 	createUserCmd.Flags().StringVarP(&userPassword, "password", "p", "", "User password")
 	createUserCmd.Flags().StringVarP(&userRole, "role", "r", "user", "User role (admin or user)")
-	createUserCmd.MarkFlagRequired("email")
-	createUserCmd.MarkFlagRequired("password")
+	if err := createUserCmd.MarkFlagRequired("email"); err != nil {
+		panic(fmt.Sprintf("failed to mark email flag as required: %v", err))
+	}
+	if err := createUserCmd.MarkFlagRequired("password"); err != nil {
+		panic(fmt.Sprintf("failed to mark password flag as required: %v", err))
+	}
 
 	// Change password flags
 	changePasswordCmd.Flags().StringVarP(&userEmail, "email", "e", "", "User email")
 	changePasswordCmd.Flags().StringVarP(&userPassword, "password", "p", "", "New password")
-	changePasswordCmd.MarkFlagRequired("email")
-	changePasswordCmd.MarkFlagRequired("password")
+	if err := changePasswordCmd.MarkFlagRequired("email"); err != nil {
+		panic(fmt.Sprintf("failed to mark email flag as required: %v", err))
+	}
+	if err := changePasswordCmd.MarkFlagRequired("password"); err != nil {
+		panic(fmt.Sprintf("failed to mark password flag as required: %v", err))
+	}
 
 	// Delete user flags
 	deleteUserCmd.Flags().StringVarP(&userEmail, "email", "e", "", "User email")
-	deleteUserCmd.MarkFlagRequired("email")
+	if err := deleteUserCmd.MarkFlagRequired("email"); err != nil {
+		panic(fmt.Sprintf("failed to mark email flag as required: %v", err))
+	}
 }
 
 var userCmd = &cobra.Command{

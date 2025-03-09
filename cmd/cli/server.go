@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -11,7 +12,9 @@ import (
 func init() {
 	rootCmd.AddCommand(serverCmd)
 	serverCmd.Flags().String("webdir", "", "Path to web content directory (uses embedded if not set)")
-	viper.BindPFlag("server.webdir", serverCmd.Flags().Lookup("webdir"))
+	if err := viper.BindPFlag("server.webdir", serverCmd.Flags().Lookup("webdir")); err != nil {
+		panic(fmt.Sprintf("failed to bind webdir flag: %v", err))
+	}
 }
 
 var serverCmd = &cobra.Command{

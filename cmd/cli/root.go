@@ -18,7 +18,9 @@ It includes user management, script storage, and variable management capabilitie
 
 func init() {
 	rootCmd.PersistentFlags().Bool("debug", false, "enable debug logging")
-	viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
+	if err := viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug")); err != nil {
+		panic(fmt.Sprintf("failed to bind debug flag: %v", err))
+	}
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
