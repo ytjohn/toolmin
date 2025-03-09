@@ -19,15 +19,8 @@ type WhoAmIResponse struct {
 	Body struct {
 		UserID         int64    `json:"userId"`
 		Email          string   `json:"email"`
-		Roles          []string `json:"roles"`
-		IsActive       bool     `json:"isActive"`
+		Role        	string `json:"role"`
 		LastLogin      string   `json:"lastLogin,omitempty"`
-		MemberID       int64    `json:"memberId,omitempty"`
-		CallSign       string   `json:"callSign,omitempty"`
-		FirstName      string   `json:"firstName,omitempty"`
-		LastName       string   `json:"lastName,omitempty"`
-		Phone          string   `json:"phone,omitempty"`
-		MembershipType string   `json:"membershipType,omitempty"`
 	} `json:"body"`
 }
 
@@ -143,7 +136,7 @@ func WhoAmI(ctx context.Context, _ *struct{}) (*WhoAmIResponse, error) {
 	response := &WhoAmIResponse{}
 	response.Body.UserID = user.ID
 	response.Body.Email = me.Email
-	response.Body.Roles = []string{} // TODO: implement roles
+	response.Body.Role = me.Role
 	response.Body.LastLogin = me.Lastlogin.Time.Format(time.RFC3339)
 
 	return response, nil

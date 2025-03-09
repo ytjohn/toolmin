@@ -1,14 +1,41 @@
 <div class="p-6 bg-white rounded-lg shadow-md" x-data="accountPage">
+    <h1 class="text-2xl font-bold mb-6">Account Information</h1>
 
+    <!-- Loading state -->
     <div x-show="loading" class="text-gray-600">
-        Loading...
+        Loading account information...
     </div>
 
+    <!-- Error state -->
     <div x-show="error" class="text-red-600" x-text="error">
     </div>
 
-    <div x-show="!loading && !error" class="space-y-4">
-        <h1 class="text-2xl font-bold mb-4">Account</h1>
-        <p>This is the account page content.</p>
-    </div>  
+    <!-- User information -->
+    <div x-show="user && !loading" class="space-y-4">
+        <dl class="grid grid-cols-3 gap-4">
+            <dt class="font-semibold text-gray-600">Email:</dt>
+            <dd class="col-span-2" x-text="user.email"></dd>
+
+            <dt class="font-semibold text-gray-600">User ID:</dt>
+            <dd class="col-span-2" x-text="user.userId"></dd>
+
+            <dt class="font-semibold text-gray-600">Role:</dt>
+            <dd class="col-span-2">
+                <div class="flex gap-2">
+                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm" 
+                          x-text="user.role"></span>
+                </div>
+            </dd>
+
+            <dt class="font-semibold text-gray-600">Last Login:</dt>
+            <dd class="col-span-2" x-text="user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never'"></dd>
+        </dl>
+
+        <div class="mt-8 pt-6 border-t">
+            <button @click="AuthService.logout().then(() => window.location.href = '/')"
+                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                Sign Out
+            </button>
+        </div>
+    </div>
 </div>

@@ -13,7 +13,7 @@ document.addEventListener('alpine:init', () => {
         ],
         
         isAuthenticated() {
-            return !!localStorage.getItem('accessToken');
+            return AuthService.isAuthenticated();
         },
         
         isCurrentPath(path) {
@@ -86,6 +86,114 @@ document.addEventListener('alpine:init', () => {
             } finally {
                 this.loading = false;
             }
+        }
+    }));
+
+    // Login form component
+    Alpine.data('loginForm', () => ({
+        email: '',
+        password: '',
+        loading: false,
+        successMessage: '',
+        errorMessage: '',
+        errors: {},
+
+        async login() {
+            this.loading = true;
+            this.errorMessage = '';
+            this.errors = {};
+
+            try {
+                const success = await AuthService.login(this.email, this.password);
+                if (success) {
+                    this.successMessage = 'Login successful!';
+                    window.location.href = '/account';
+                } else {
+                    this.errorMessage = 'Invalid email or password';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                this.errorMessage = 'Login failed. Please try again.';
+            } finally {
+                this.loading = false;
+            }
+        }
+    }));
+
+    // Account page component
+    Alpine.data('accountPage', () => ({
+        user: null,
+        loading: true,
+        error: null,
+
+        init() {
+            this.fetchUserInfo();
+        },
+
+        async fetchUserInfo() {
+            try {
+                const response = await fetch('/api/v1/whoami', {
+                    headers: {
+                        'Authorization': `Bearer ${AuthService.getAccessToken()}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user info');
+                }
+
+                const data = await response.json();
+                this.user = data;
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+                this.error = 'Failed to load user information';
+            } finally {
+                this.loading = false;
+            }
+        }
+    }));
+
+    // Header Auth component
+    Alpine.data('headerAuth', () => ({
+        dropdownOpen: false,
+        loading: true,
+        userDisplay: '',
+        userInitial: '',
+
+        init() {
+            this.updateUserInfo();
+            // Listen for auth changes
+            document.addEventListener('auth:changed', () => this.updateUserInfo());
+        },
+
+        isAuthenticated() {
+            return AuthService.isAuthenticated();
+        },
+
+        async updateUserInfo() {
+            this.loading = true;
+            if (this.isAuthenticated()) {
+                try {
+                    const response = await fetch('/api/v1/whoami', {
+                        headers: {
+                            'Authorization': `Bearer ${AuthService.getAccessToken()}`
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.userDisplay = data.body.email;
+                        this.userInitial = data.body.email[0].toUpperCase();
+                    }
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
+                }
+            }
+            this.loading = false;
+        },
+
+        async logout() {
+            await AuthService.logout();
+            window.location.href = '/';
         }
     }));
 });
