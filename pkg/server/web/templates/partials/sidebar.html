@@ -1,0 +1,36 @@
+<nav x-data="sidebar">
+    <h2 class="text-lg font-semibold mb-4">Navigation</h2>
+    
+    <!-- Public Links -->
+    <div class="space-y-2 mb-6">
+        <template x-for="(item, index) in publicMenuItems" :key="index">
+            <a :href="item.href"
+               class="block px-4 py-2 rounded-md transition-colors duration-200"
+               :class="{
+                   'bg-blue-500 text-white': isCurrentPath(item.href),
+                   'text-gray-700 hover:bg-blue-50': !isCurrentPath(item.href)
+               }">
+                <span x-text="item.label"></span>
+            </a>
+        </template>
+    </div>
+    
+    <!-- Authenticated Links -->
+    <template x-if="isAuthenticated()">
+        <div>
+            <h3 class="text-sm font-semibold text-gray-500 px-4 mb-2">Member Area</h3>
+            <div class="space-y-2">
+                <template x-for="(item, index) in authMenuItems" :key="index">
+                    <a :href="item.href"
+                       class="block px-4 py-2 rounded-md transition-colors duration-200"
+                       :class="{
+                           'bg-blue-500 text-white': isCurrentPath(item.href),
+                           'text-gray-700 hover:bg-blue-50': !isCurrentPath(item.href)
+                       }">
+                        <span x-text="item.label"></span>
+                    </a>
+                </template>
+            </div>
+        </div>
+    </template>
+</nav> 

@@ -1,0 +1,47 @@
+<nav class="px-4 py-2 flex items-center justify-between">
+    <!-- Logo/Brand -->
+    <a href="/" class="text-xl font-bold">ToolMinFun</a>
+    
+    <!-- Navigation -->
+    <div class="flex items-center space-x-4">
+        <a href="/" class="text-blue-600 hover:text-blue-800">Home</a>
+        <a href="/about" class="text-blue-600 hover:text-blue-800">About</a>
+        
+        <!-- Auth Section -->
+        <div x-data="headerAuth">
+            <!-- Loading State -->
+            <div x-show="loading" class="animate-pulse">
+                <div class="w-20 h-6 bg-gray-200 rounded"></div>
+            </div>
+            
+            <!-- Logged Out State -->
+            <a x-show="!loading && !isAuthenticated()" 
+               href="/login"
+               class="text-blue-600 hover:text-blue-800">
+                Login
+            </a>
+            
+            <!-- Logged In State -->
+            <div x-show="!loading && isAuthenticated()" class="relative" @click.away="dropdownOpen = false">
+                <!-- Profile Button -->
+                <button @click="dropdownOpen = !dropdownOpen" 
+                        class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                        <span x-text="userInitial"></span>
+                    </div>
+                    <span x-text="userDisplay"></span>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div x-show="dropdownOpen"
+                     class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                    <a href="/account" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Account</a>
+                    <button @click="logout()" 
+                            class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav> 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">ToolMin</title>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- App JS -->
+    <script src="/js/router.js"></script>
+    <script src="/js/components.js"></script>
+    
+    <!-- Other resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow mb-4">
+        <div class="container mx-auto">
+            <div hx-get="/templates/partials/header.html" 
+                 hx-trigger="load, auth:changed from:body"
+                 hx-swap="innerHTML"></div>
+        </div>
+    </header>
+
+    <!-- Main layout with sidebar -->
+    <div class="container mx-auto flex" x-data="{ sidebarOpen: true }">
+        <!-- Sidebar -->
+        <div class="relative">
+            <!-- Sidebar content -->
+            <aside class="w-64 transition-all duration-300 ease-in-out"
+                     :class="{ '-ml-64': !sidebarOpen }">
+                <div class="bg-white shadow rounded-lg p-4 mr-4">
+                    <div hx-get="/templates/partials/sidebar.html" 
+                         hx-trigger="load, auth:changed from:body"
+                         hx-swap="innerHTML"></div>
+                </div>
+            </aside>
+            
+            <!-- Toggle button -->
+            <button @click="sidebarOpen = !sidebarOpen"
+                    class="absolute top-0 -right-3 mt-4 bg-white rounded-r p-1 shadow hover:bg-gray-100"
+                    :class="{ '-right-3': sidebarOpen, '-right-7': !sidebarOpen }">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     :class="{ 'rotate-180': !sidebarOpen }"
+                     class="h-5 w-5 text-gray-500 transition-transform duration-300" 
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div id="content" class="p-4">
+                <!-- Content will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white shadow mt-8">
+        <div class="container mx-auto">
+            <div hx-get="/templates/partials/footer.html" 
+                 hx-trigger="load"
+                 hx-swap="innerHTML"></div>
+        </div>
+    </footer>
+</body>
+</html> 
