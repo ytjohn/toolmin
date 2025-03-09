@@ -6,20 +6,26 @@ package appdb
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Querier interface {
 	CreateScript(ctx context.Context, arg CreateScriptParams) (Script, error)
 	CreateSecret(ctx context.Context, arg CreateSecretParams) (Secret, error)
+	CreateSigningKey(ctx context.Context, keyData string) (SigningKey, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	CreateVar(ctx context.Context, arg CreateVarParams) (Var, error)
+	DeleteExpiredKeys(ctx context.Context, days sql.NullString) error
 	DeleteScript(ctx context.Context, name string) error
 	DeleteSecret(ctx context.Context, key string) error
 	DeleteUser(ctx context.Context, email string) error
 	DeleteVar(ctx context.Context, key string) error
+	GetActiveSigningKey(ctx context.Context) (SigningKey, error)
+	GetAllValidSigningKeys(ctx context.Context) ([]SigningKey, error)
 	GetScript(ctx context.Context, name string) (Script, error)
 	GetSecret(ctx context.Context, key string) (Secret, error)
 	GetUser(ctx context.Context, id int64) (User, error)
+	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
 	GetVar(ctx context.Context, key string) (Var, error)
 	ListScripts(ctx context.Context) ([]Script, error)
@@ -27,8 +33,10 @@ type Querier interface {
 	ListSecrets(ctx context.Context) ([]Secret, error)
 	ListUsers(ctx context.Context) ([]User, error)
 	ListVars(ctx context.Context) ([]Var, error)
+	MarkExpiredKeysInactive(ctx context.Context) error
 	UpdateScript(ctx context.Context, arg UpdateScriptParams) (Script, error)
 	UpdateSecret(ctx context.Context, arg UpdateSecretParams) (Secret, error)
+	UpdateSigningKeyData(ctx context.Context, arg UpdateSigningKeyDataParams) error
 	UpdateUserLastLogin(ctx context.Context, id int64) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 	UpdateVar(ctx context.Context, arg UpdateVarParams) (Var, error)

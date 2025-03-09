@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 
@@ -21,6 +22,15 @@ var serverCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the web server",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Open database connection
+		Log.Debug("opening database", "path", GlobalConfig.Database.Path)
+		db, err := sql.Open("sqlite", GlobalConfig.Database.Path)
+		if err != nil {
+			Log.Error("failed to open database", "error", err)
+			os.Exit(1)
+		}
+		defer db.Close()
+
 		config := &server.Config{
 			Host:          GlobalConfig.Server.Host,
 			Port:          GlobalConfig.Server.Port,
@@ -28,7 +38,7 @@ var serverCmd = &cobra.Command{
 			WebContentDir: viper.GetString("server.webdir"),
 		}
 
-		srv := server.New(config, Log)
+		srv := server.New(config, Log, db)
 		Log.Info("starting server", "host", config.Host, "port", config.Port)
 		if err := srv.Start(); err != nil {
 			Log.Error("server error", "error", err)

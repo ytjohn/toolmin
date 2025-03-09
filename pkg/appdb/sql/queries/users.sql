@@ -28,4 +28,8 @@ WHERE email = ?;
 
 -- name: DeleteUser :exec
 DELETE FROM users
-WHERE email = ?; 
+WHERE email = ?;
+
+-- name: GetUserByEmail :one
+SELECT * FROM users
+WHERE email = ? LIMIT 1; 

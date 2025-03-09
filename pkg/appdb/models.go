@@ -26,6 +26,15 @@ type Secret struct {
 	Updated time.Time `json:"updated"`
 }
 
+type SigningKey struct {
+	ID        int64     `json:"id"`
+	KeyData   string    `json:"key_data"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	ExpiresAt time.Time `json:"expires_at"`
+	IsActive  bool      `json:"is_active"`
+}
+
 type User struct {
 	ID        int64        `json:"id"`
 	Username  string       `json:"username"`

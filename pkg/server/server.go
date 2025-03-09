@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"embed"
 	"fmt"
 	"io/fs"
@@ -14,6 +15,9 @@ import (
 	_ "github.com/danielgtaylor/huma/v2/formats/cbor"
 
 	"github.com/ytjohn/toolmin/pkg/about"
+	appdb "github.com/ytjohn/toolmin/pkg/appdb"
+	"github.com/ytjohn/toolmin/pkg/auth"
+	"github.com/ytjohn/toolmin/pkg/server/authhandler"
 	"github.com/ytjohn/toolmin/pkg/server/middleware"
 )
 
@@ -57,6 +61,7 @@ type Server struct {
 	config     *Config
 	log        *slog.Logger
 	mainRouter *http.ServeMux
+	db         *sql.DB
 }
 
 // Config holds server configuration
@@ -68,11 +73,12 @@ type Config struct {
 }
 
 // New creates a new server instance
-func New(config *Config, log *slog.Logger) *Server {
+func New(config *Config, log *slog.Logger, db *sql.DB) *Server {
 	return &Server{
 		config:     config,
 		log:        log,
 		mainRouter: http.NewServeMux(),
+		db:         db,
 	}
 }
 
@@ -127,11 +133,33 @@ func (s *Server) setupAPI() *http.ServeMux {
 	config.DocsPath = "/api/v1/docs"
 	config.SchemasPath = "/api/v1/schemas"
 	config.OpenAPIPath = "/api/v1/openapi"
+	config.Components.SecuritySchemes = map[string]*huma.SecurityScheme{
+		"bearerAuth": {
+			Type:         "http",
+			Scheme:       "bearer",
+			BearerFormat: "JWT",
+		},
+	}
+
+	// Initialize token service
+	tokenService, err := auth.NewTokenService(s.db)
+	if err != nil {
+		fmt.Printf("Failed to initialize token service: %v", err)
+		return nil
+	}
 
 	api := humago.New(apiRouter, config)
 
 	// Add middleware with the server's logger
 	api.UseMiddleware(middleware.WithLogger(s.log))
+	api.UseMiddleware(withDB(s.db))
+	api.UseMiddleware(func(ctx huma.Context, next func(huma.Context)) {
+		ctx = huma.WithValue(ctx, middleware.TokenServiceKey, tokenService)
+		ctx = huma.WithValue(ctx, middleware.KeyManagerKey, tokenService.GetKeyManager())
+		next(ctx)
+	})
+	api.UseMiddleware(middleware.WithAuth)
+	// Initialize token service
 
 	// Add version endpoint
 	huma.Register(api, huma.Operation{
@@ -142,14 +170,27 @@ func (s *Server) setupAPI() *http.ServeMux {
 		// Tags:        []string{"version"},
 	}, GetVersion)
 
+	authhandler.RegisterAuthHandlers(api)
+
 	return apiRouter
 }
 
 // Start initializes and starts the server
 func (s *Server) Start() error {
-	// Setup API
-	api := s.setupAPI()
-	s.mainRouter.Handle("/api/v1/", api)
+	// Setup API with database context
+	apiRouter := s.setupAPI()
+
+	// // Add middleware that includes our db connection
+	// api.UseMiddleware(func(ctx huma.Context, next func(huma.Context)) {
+	// 	// Add database to context
+	// 	ctx = huma.WithValue(ctx, appdb.DbContextKey, s.db)
+	// 	next(ctx)
+	// })
+
+	// // Add logging middleware
+	// api.UseMiddleware(middleware.WithLogger(s.log))
+
+	s.mainRouter.Handle("/api/v1/", apiRouter)
 
 	// Setup static file serving
 	fs := s.chooseFileSystem()
@@ -198,3 +239,26 @@ func GetVersion(ctx context.Context, input *struct{}) (*VersionResponse, error) 
 		},
 	}, nil
 }
+
+// Middleware to inject DB into context
+func withDB(db *sql.DB) func(ctx huma.Context, next func(huma.Context)) {
+	return func(ctx huma.Context, next func(huma.Context)) {
+		// Add DB to context
+		ctx = huma.WithValue(ctx, appdb.DbContextKey, db)
+		next(ctx)
+	}
+}
+
+// func connectDB(options *Options) (*sql.DB, error) {
+// 	db, err := sql.Open("sqlite3", options.SQLitePath)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// Enable foreign keys for SQLite
+// 	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
+// 		return nil, fmt.Errorf("error enabling foreign keys: %w", err)
+// 	}
+
+// 	return db, nil
+// }

@@ -10,10 +10,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-type contextKey string
-
-const LoggerKey contextKey = "logger"
-
 // GetLogger retrieves the logger from the context
 func GetLogger(ctx context.Context) *slog.Logger {
 	if logger, ok := ctx.Value(LoggerKey).(*slog.Logger); ok {
