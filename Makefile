@@ -48,7 +48,7 @@ database-shell:  sqlite3-install  # Open the database shell
 .PHONY: database-create
 database-create:  sqlite3-install  # Populate the database with schema and sample data
 	mkdir -p data
-	sqlite3 $(DB_PATH) < database/schema/schema.sql
+	sqlite3 $(DB_PATH) < pkg/appdb/sql/schema/schema.sql
 
 # .PHONY: database-load-sample-data
 # database-load-sample-data:  sqlite3-install  # Load sample data into the database

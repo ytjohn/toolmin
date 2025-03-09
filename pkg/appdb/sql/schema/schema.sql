@@ -1,5 +1,5 @@
 -- Users table for authentication and authorization
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
@@ -11,7 +11,7 @@ CREATE TABLE users (
 );
 
 -- Scripts table for storing TCL scripts
-CREATE TABLE scripts (
+CREATE TABLE IF NOT EXISTS scripts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
     content TEXT NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE scripts (
 );
 
 -- Variables table for storing configuration
-CREATE TABLE vars (
+CREATE TABLE IF NOT EXISTS vars (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT NOT NULL UNIQUE,
     value TEXT NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE vars (
 );
 
 -- Secrets table with encrypted values
-CREATE TABLE secrets (
+CREATE TABLE IF NOT EXISTS secrets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT NOT NULL UNIQUE,
     value BLOB NOT NULL, -- Encrypted using AES-256 GCM

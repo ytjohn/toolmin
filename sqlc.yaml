@@ -1,8 +1,8 @@
 version: "2"
 sql:
   - engine: "sqlite"
-    queries: "database/queries/"
-    schema: "database/schema/"
+    queries: "pkg/appdb/sql/queries/"
+    schema: "pkg/appdb/sql/schema/"
     gen:
       go:
         package: "appdb"

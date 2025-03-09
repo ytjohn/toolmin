@@ -22,7 +22,18 @@ This will create `bin/toolmin`.
 
 ### Database Setup
 
-The application uses SQLite3 for data storage. The database will be created automatically in `data/toolmin.db` when needed.
+The application uses SQLite3 for data storage. The database schema is embedded in the binary and can be initialized with:
+
+```shell
+# Initialize database (creates data/toolmin.db by default)
+toolmin db init
+```
+
+The database location can be configured with the `TOOLMIN_DATABASE_PATH` environment variable:
+
+```shell
+TOOLMIN_DATABASE_PATH=/custom/path/db.sqlite toolmin db init
+```
 
 ### User Management
 
@@ -78,7 +89,9 @@ TOOLMIN_SERVER_PORT=9000 TOOLMIN_SERVER_HOST=0.0.0.0 TOOLMIN_DEBUG=true toolmin 
 Key components:
 - `cmd/cli`: Command-line interface and configuration
 - `pkg/about`: Version and application information
-- `pkg/appdb`: Generated database code (using SQLC)
+- `pkg/appdb`: Generated database code and schema
+  - `pkg/appdb/sql/schema`: Database schema definitions
+  - `pkg/appdb/sql/queries`: SQL queries for SQLC
 - `pkg/auth`: Authentication utilities
 - `pkg/server`: Web server and API endpoints
 - `web/`: Frontend assets and templates
