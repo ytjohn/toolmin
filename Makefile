@@ -92,10 +92,9 @@ database-migrate-create: goose-install   # Create a new migration (usage: make d
 
 run:  # Run the application with environment variables
 	@if [ -f .env ]; then \
-		source .env && go run main.go -d --web-content-dir $(WEB_CONTENT_DIR); \
+		source .env && go run ./cmd/... serve --debug --webdir $(WEB_CONTENT_DIR); \
 	else \
-		echo "Error: .env file not found. Copy sample.env to .env first."; \
-		echo "  cp sample.env .env"; \
+		go run ./cmd/... serve --debug --webdir $(WEB_CONTENT_DIR); \
 		exit 1; \
 	fi
 
