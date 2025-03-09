@@ -87,16 +87,16 @@ TOOLMIN_SERVER_PORT=9000 TOOLMIN_SERVER_HOST=0.0.0.0 TOOLMIN_DEBUG=true toolmin 
 ## Screenshots
 
 ### Login Page
-![Login Page](docs/images/login-validation.png)
+![Login Page](docs/images/login-page.png)
 
 ### Authenticated User
-![Signed In](docs/images/signedin.png)
+![Signed In](docs/images/account-page.png)
+
+### About Page
+![About Page](docs/images/about-page.png)
 
 ### API Whoami with Auth
 ![API Whoami](docs/images/api-whoami.png)
-
-### About Page
-![About Page](docs/images/aboutpage.png)
 
 ### API Version Info
 ![API Version](docs/images/apiversion.png)

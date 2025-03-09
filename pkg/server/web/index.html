@@ -16,25 +16,62 @@
     <!-- Other resources -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+
+    <!-- Add this in the head section -->
+    <link rel="stylesheet" href="/css/main.css">
+    <script>
+    tailwind.config = {
+        darkMode: ["class"],
+        theme: {
+            extend: {
+                colors: {
+                    border: "hsl(var(--border))",
+                    input: "hsl(var(--input))",
+                    ring: "hsl(var(--ring))",
+                    background: "hsl(var(--background))",
+                    foreground: "hsl(var(--foreground))",
+                    primary: {
+                        DEFAULT: "hsl(var(--primary))",
+                        foreground: "hsl(var(--primary-foreground))",
+                    },
+                    secondary: {
+                        DEFAULT: "hsl(var(--secondary))",
+                        foreground: "hsl(var(--secondary-foreground))",
+                    },
+                    accent: {
+                        DEFAULT: "hsl(var(--accent))",
+                        foreground: "hsl(var(--accent-foreground))",
+                    },
+                    muted: {
+                        DEFAULT: "hsl(var(--muted))",
+                        foreground: "hsl(var(--muted-foreground))",
+                    },
+                }
+            }
+        }
+    }
+    </script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-white shadow mb-4">
-        <div class="container mx-auto">
-            <div hx-get="/templates/partials/header.html" 
-                 hx-trigger="load, auth:changed from:body"
-                 hx-swap="innerHTML"></div>
+    <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div class="px-4 md:px-6 lg:px-8">
+            <div class="flex h-14 items-center justify-between">
+                <div hx-get="/templates/partials/header.html" 
+                     hx-trigger="load, auth:changed from:body"
+                     hx-swap="innerHTML"
+                     class="w-full"></div>
+            </div>
         </div>
     </header>
 
     <!-- Main layout with sidebar -->
-    <div class="container mx-auto flex" x-data="{ sidebarOpen: true }">
+    <div class="flex flex-1">
         <!-- Sidebar -->
         <div class="relative">
-            <!-- Sidebar content -->
-            <aside class="w-64 transition-all duration-300 ease-in-out"
-                     :class="{ '-ml-64': !sidebarOpen }">
-                <div class="bg-white shadow rounded-lg p-4 mr-4">
+            <aside class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-72 border-r lg:block"
+                   :class="{ '-ml-72': !sidebarOpen }">
+                <div class="h-full py-6 pl-8 pr-6">
                     <div hx-get="/templates/partials/sidebar.html" 
                          hx-trigger="load, auth:changed from:body"
                          hx-swap="innerHTML"></div>
@@ -43,11 +80,11 @@
             
             <!-- Toggle button -->
             <button @click="sidebarOpen = !sidebarOpen"
-                    class="absolute top-0 -right-3 mt-4 bg-white rounded-r p-1 shadow hover:bg-gray-100"
-                    :class="{ '-right-3': sidebarOpen, '-right-7': !sidebarOpen }">
+                    class="fixed top-20 left-72 z-40 hidden h-8 w-8 rounded-full bg-white shadow-md lg:block"
+                    :class="{ 'left-0': !sidebarOpen }">
                 <svg xmlns="http://www.w3.org/2000/svg" 
                      :class="{ 'rotate-180': !sidebarOpen }"
-                     class="h-5 w-5 text-gray-500 transition-transform duration-300" 
+                     class="h-4 w-4 m-2 text-gray-600 transition-transform duration-200" 
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -55,19 +92,22 @@
         </div>
 
         <!-- Main content -->
-        <main class="flex-1">
-            <div id="content" class="p-4">
+        <main class="flex-1 lg:pl-72" :class="{ '!pl-0': !sidebarOpen }">
+            <div id="content" class="px-4 py-6">
                 <!-- Content will be loaded here -->
             </div>
         </main>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white shadow mt-8">
-        <div class="container mx-auto">
-            <div hx-get="/templates/partials/footer.html" 
-                 hx-trigger="load"
-                 hx-swap="innerHTML"></div>
+    <footer class="border-t bg-background mt-auto">
+        <div class="px-4 md:px-6 lg:px-8">
+            <div class="flex h-14 items-center">
+                <div hx-get="/templates/partials/footer.html" 
+                     hx-trigger="load"
+                     hx-swap="innerHTML"
+                     class="w-full"></div>
+            </div>
         </div>
     </footer>
 </body>

@@ -2,7 +2,7 @@
 
 # Dev database
 DB_PATH ?= data/toolmin.db
-WEB_CONTENT_DIR ?= web
+WEB_CONTENT_DIR ?= pkg/server/web
 
 # Tool Versions
 GOOSE_VERSION ?= v3.11.1
