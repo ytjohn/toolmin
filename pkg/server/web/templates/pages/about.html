@@ -1,5 +1,37 @@
-<div class="p-6 bg-white rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold mb-4">About Us</h1>
-    <p class="mb-4">This is the about page content.</p>
-    <!-- More content here -->
+<div class="p-6 bg-white rounded-lg shadow-md" x-data="aboutPage">
+    <h1 class="text-2xl font-bold mb-4">About ToolMin</h1>
+    
+    <div x-show="loading" class="text-gray-600">
+        Loading...
+    </div>
+
+    <div x-show="error" class="text-red-600" x-text="error">
+    </div>
+
+    <div x-show="!loading && !error" class="space-y-4">
+        <p class="mb-4">ToolMin is a lightweight web-based admin toolkit.</p>
+        
+        <div class="border-t pt-4">
+            <h2 class="text-lg font-semibold mb-2">Version Information</h2>
+            <dl class="grid grid-cols-2 gap-2">
+                <dt class="text-gray-600">Application:</dt>
+                <dd x-text="info?.appName"></dd>
+                
+                <dt class="text-gray-600">Version:</dt>
+                <dd x-text="info?.version"></dd>
+                
+                <dt class="text-gray-600">Copyright:</dt>
+                <dd x-text="info?.copyright"></dd>
+                
+                <dt class="text-gray-600">More Info:</dt>
+                <dd>
+                    <a :href="info?.url" 
+                       class="text-blue-600 hover:text-blue-800" 
+                       target="_blank" 
+                       x-text="info?.url">
+                    </a>
+                </dd>
+            </dl>
+        </div>
+    </div>
 </div> 
